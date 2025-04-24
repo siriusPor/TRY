@@ -1,0 +1,142 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2759
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="en">\
+<head>\
+  <meta charset="UTF-8" />\
+  <title>Gel Electrophoresis Simulation</title>\
+  <style>\
+    body \{\
+      font-family: sans-serif;\
+      background: #f0f0f0;\
+    \}\
+    .gel-container \{\
+      display: flex;\
+      gap: 10px;\
+      margin-top: 20px;\
+      justify-content: center;\
+    \}\
+    .lane \{\
+      width: 80px;\
+      height: 600px;\
+      background: #fff;\
+      border: 2px solid #333;\
+      position: relative;\
+    \}\
+    .band \{\
+      position: absolute;\
+      height: 4px;\
+      background: #000;\
+      width: 100%;\
+    \}\
+    .controls \{\
+      margin-top: 20px;\
+      display: flex;\
+      justify-content: center;\
+      gap: 20px;\
+    \}\
+    .controls input \{\
+      width: 60px;\
+    \}\
+    h2 \{\
+      text-align: center;\
+    \}\
+  </style>\
+</head>\
+<body>\
+\
+<h2>\uc0\u3592 \u3635 \u3621 \u3629 \u3591 \u3585 \u3634 \u3619 \u3649 \u3618 \u3585 \u3594 \u3636 \u3657 \u3609  DNA \u3604 \u3657 \u3623 \u3618  Agarose Gel</h2>\
+\
+<div class="gel-container" id="gel">\
+  <div class="lane" id="lane1"></div>\
+  <div class="lane" id="lane2"></div>\
+  <div class="lane" id="lane3"></div>\
+  <div class="lane" id="lane4"></div>\
+  <div class="lane" id="lane5"></div>\
+</div>\
+\
+<div class="controls">\
+  <div>\
+    <label>Lane:</label>\
+    <select id="laneSelect">\
+      <option value="2">Lane 2</option>\
+      <option value="3">Lane 3</option>\
+      <option value="4">Lane 4</option>\
+      <option value="5">Lane 5</option>\
+    </select>\
+  </div>\
+  <div>\
+    <label># of Bands:</label>\
+    <input type="number" id="bandCount" min="1" max="10" value="1" />\
+  </div>\
+  <div>\
+    <label>Sizes (bp, comma-separated):</label>\
+    <input type="text" id="bandSizes" placeholder="1500, 900, ..." />\
+  </div>\
+  <button onclick="addBands()">Add Bands</button>\
+</div>\
+\
+<script>\
+  // Random ladder sizes from 400 to 24000 (16 values)\
+  const ladderSizes = [...Array(16)].map(() => Math.floor(Math.random() * (24000 - 400 + 1)) + 400);\
+  ladderSizes.sort((a, b) => b - a); // Sort descending\
+\
+  const gelHeight = 600;\
+  const minSize = 24000;\
+  const maxSize = 400;\
+\
+  function sizeToY(size) \{\
+    // Simulate migration: larger bp stays higher (closer to 0)\
+    const logSize = Math.log10(size);\
+    const logMin = Math.log10(minSize);\
+    const logMax = Math.log10(maxSize);\
+    const scale = (logSize - logMin) / (logMax - logMin);\
+    return scale * gelHeight;\
+  \}\
+\
+  function drawLadder() \{\
+    const lane = document.getElementById("lane1");\
+    ladderSizes.forEach(size => \{\
+      const band = document.createElement("div");\
+      band.className = "band";\
+      band.style.top = `$\{sizeToY(size)\}px`;\
+      lane.appendChild(band);\
+    \});\
+  \}\
+\
+  function addBands() \{\
+    const laneId = "lane" + document.getElementById("laneSelect").value;\
+    const lane = document.getElementById(laneId);\
+    const count = parseInt(document.getElementById("bandCount").value);\
+    const sizes = document.getElementById("bandSizes").value\
+      .split(",")\
+      .map(s => parseInt(s.trim()))\
+      .filter(s => !isNaN(s));\
+\
+    if (sizes.length !== count) \{\
+      alert("\uc0\u3592 \u3635 \u3609 \u3623 \u3609 \u3594 \u3636 \u3657 \u3609  DNA \u3607 \u3637 \u3656 \u3585 \u3619 \u3629 \u3585 \u3652 \u3617 \u3656 \u3605 \u3619 \u3591 \u3585 \u3633 \u3610 \u3592 \u3635 \u3609 \u3623 \u3609 \u3607 \u3637 \u3656 \u3648 \u3621 \u3639 \u3629 \u3585 ");\
+      return;\
+    \}\
+\
+    // Clear lane before adding new bands\
+    lane.innerHTML = "";\
+\
+    sizes.forEach(size => \{\
+      const band = document.createElement("div");\
+      band.className = "band";\
+      band.style.background = "blue";\
+      band.style.top = `$\{sizeToY(size)\}px`;\
+      lane.appendChild(band);\
+    \});\
+  \}\
+\
+  drawLadder();\
+</script>\
+\
+</body>\
+</html>}
